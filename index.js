@@ -6,6 +6,8 @@ const PORT = 3000;
 let  sessions = {};
 const getQuestion = require('./Helper/AI_Helper_Function')
 const generateFeedback = require('./Helper/Feedback')
+const Summar = require('./Helper/Summary');
+const Summary = require('./Helper/Summary');
 // middleware
 app.use(express.json());
 app.use(cors());
@@ -68,6 +70,34 @@ app.post('/api/answer',async(req,res)=>{
 
     }catch(error){
         res.status(500).json({message:"Internal Server Error",error: error.message});
+    }
+})
+
+app.post('/api/end-session',async(req,res)=>{
+    try{
+        const {sessionId} = req.body;
+
+        if(!sessionId){
+            return res.status(404).json({error:"SessionId hasn't provided!"});
+        }
+
+    //    fetch the stored data
+        const sessionData = sessions[sessionId];
+
+        if (!sessionData) {
+      return res.status(404).json({ error: "Session not found!" });
+    }
+
+        const result = await Summary(sessionId, sessionData)
+
+ return res.status(200).json({
+      message: "Session ended and evaluated",
+      report: result
+    });
+
+
+    }catch(error){
+        res.status(500).json({message:"Internal Server Error",error:error.message});
     }
 })
 
