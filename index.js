@@ -5,6 +5,7 @@ const app = express();
 const PORT = 3000;
 let  sessions = {};
 const getQuestion = require('./Helper/AI_Helper_Function')
+const generateFeedback = require('./Helper/Feedback')
 // middleware
 app.use(express.json());
 app.use(cors());
@@ -47,6 +48,29 @@ app.post('/api/start-session',async(req,res)=>{
         res.status(500).json({message:"Internal Server Error",error:error.message});
     }
 })
+
+
+app.post('/api/answer',async(req,res)=>{
+    try{
+      const  {previousQuestion, answer} = req.body;
+
+      if(!previousQuestion || !answer){
+        return res.status(404).json({error:"provide previous question and answer"})
+      }
+
+      const result = await generateFeedback(previousQuestion, answer)
+
+       res.status(200).json({
+        message: "Answer processed",
+        feedback: result.feedback,
+        nextQuestion: result.nextQuestion
+      });
+
+    }catch(error){
+        res.status(500).json({message:"Internal Server Error",error: error.message});
+    }
+})
+
 
 app.listen(PORT,()=>{
     console.log(`Server is running on PORT ${PORT}`);
