@@ -2,12 +2,16 @@ const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const cors = require('cors');
 const app = express();
+const {initializeDatabase} = require('./DB/db.connect');
+initializeDatabase();
 const PORT = 3000;
 let  sessions = {};
 const getQuestion = require('./Helper/AI_Helper_Function')
 const generateFeedback = require('./Helper/Feedback')
-const Summar = require('./Helper/Summary');
 const Summary = require('./Helper/Summary');
+const authRoutes = require('./Auth/auth')
+
+
 // middleware
 app.use(express.json());
 app.use(cors());
@@ -16,6 +20,11 @@ app.get('/',async(req,res)=>{
 
     res.send("Hello World!");
 })
+
+
+// login route
+
+app.use('/auth',authRoutes);
 
 app.post('/api/start-session',async(req,res)=>{
     try{

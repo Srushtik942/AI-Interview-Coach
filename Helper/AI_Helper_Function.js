@@ -25,7 +25,8 @@ Use exactly this schema:
 
 Rules:
 - Output valid JSON only.
-- Keep field names exactly as above.`
+- Keep field names exactly as above.
+`
 
 
 async function getQuestion(role, experience,category) {
